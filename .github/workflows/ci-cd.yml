@@ -19,7 +19,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        push: false
+        load: true  # This exports the image to the local Docker daemon so Trivy can see it!
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-inventory:test
 
     - name: Run Trivy Security Vulnerability Scanner
@@ -27,7 +27,7 @@ jobs:
       with:
         image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-inventory:test'
         format: 'table'
-        exit-code: '0' # Keeps the pipeline going for learning purposes, change to '1' to block insecure builds
+        exit-code: '0'
         severity: 'CRITICAL,HIGH'
 
     - name: Log in to Docker Hub
@@ -44,3 +44,4 @@ jobs:
         tags: |
           ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-inventory:latest
           ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-inventory:${{ github.sha }}
+        
